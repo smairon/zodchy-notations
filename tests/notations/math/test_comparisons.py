@@ -104,9 +104,10 @@ references = {
     ]
 )
 def test_comparisons(
-    parser: codex.query.NotationParser,
+    parser,
+    types_map,
     data: str,
     value: typing.Any
 ):
-    result = next(parser(data), None)
-    assert result.value == value
+    result = next(parser(data, types_map), None)
+    assert result[1] == value

@@ -43,10 +43,11 @@ from zodchy import codex
     ]
 )
 def test_set(
-    parser: codex.query.NotationParser,
+    parser,
+    types_map,
     data: str,
     values: set[typing.Any]
 ):
-    param = next(parser(data), None)
-    assert isinstance(param.value, codex.query.SET)
-    assert param.value.value == values
+    param = next(parser(data, types_map), None)
+    assert isinstance(param[1], codex.query.SET)
+    assert param[1].value == values

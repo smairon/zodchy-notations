@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zodchy-notations"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["Smairon <man@smairon.ru>"]
 readme = "README.md"
@@ -8,8 +8,11 @@ repository = "https://github.com/smairon/zodchy-notations"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-zodchy = "^0.2.1"
+zodchy = "^0.2.3"
 python-dateutil = "^2.9.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.1.1"
 
 [build-system]
 requires = ["poetry-core"]

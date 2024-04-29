@@ -79,14 +79,15 @@ from zodchy import codex
 )
 def test_closed_interval(
     parser,
+    types_map,
     data: str,
     left_class: codex.query.FilterBit,
     right_class: codex.query.FilterBit,
     left_value: int | float | datetime.datetime | datetime.date,
     right_value: int | float | datetime.datetime | datetime.date,
 ):
-    result = next(parser(data), None)
-    range_param = result.value
+    result = next(parser(data, types_map), None)
+    range_param = result[1]
     assert isinstance(range_param, codex.query.RANGE)
     left_instance, right_instance = range_param.value
     assert isinstance(left_instance, left_class)
@@ -154,12 +155,13 @@ def test_closed_interval(
 )
 def test_opened_interval(
     parser,
+    types_map,
     data: str,
     left_bound: codex.query.FilterBit,
     right_bound: codex.query.FilterBit,
 ):
-    result = next(parser(data), None)
-    range_param = result.value
+    result = next(parser(data, types_map), None)
+    range_param = result[1]
     assert isinstance(range_param, codex.query.RANGE)
     left_instance, right_instance = range_param.value
     assert left_instance == left_bound
