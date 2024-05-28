@@ -4,7 +4,7 @@ import uuid
 
 import pytest
 
-from zodchy import codex
+from zodchy import operators
 
 
 @pytest.mark.parametrize(
@@ -49,5 +49,5 @@ def test_set(
     values: set[typing.Any]
 ):
     param = next(parser(data, types_map), None)
-    assert isinstance(param[1], codex.query.SET)
+    assert isinstance(param[1], operators.SET)
     assert param[1].value == values

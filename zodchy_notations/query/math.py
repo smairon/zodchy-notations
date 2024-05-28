@@ -8,7 +8,7 @@ import types
 import dateutil.parser
 import functools
 
-from zodchy import codex
+from zodchy import codex, operators
 
 FieldName = str
 FieldType = type
@@ -94,12 +94,12 @@ class Parser:
             elif k == self._parsing_schema.limit:
                 yield Param(
                     name=self._parsing_schema.limit,
-                    value=codex.query.Limit(int(v))
+                    value=operators.Limit(int(v))
                 )
             elif k == self._parsing_schema.offset:
                 yield Param(
                     name=self._parsing_schema.offset,
-                    value=codex.query.Offset(int(v))
+                    value=operators.Offset(int(v))
                 )
             else:
                 yield self._parse_filter_param(k, v.strip(), types_map)
@@ -110,9 +110,9 @@ class Parser:
     ) -> collections.abc.Generator[Param, None, None]:
         priority = 0
         for name in names.split(','):
-            direction = codex.query.ASC
+            direction = operators.ASC
             if name.startswith('-'):
-                direction = codex.query.DESC
+                direction = operators.DESC
                 name = name[1:]
             yield Param(
                 name=name,
@@ -138,8 +138,8 @@ class Parser:
         field_name: str,
         field_value: str,
         operations: tuple[
-            type[codex.query.GT | codex.query.GE],
-            type[codex.query.LT | codex.query.LE]
+            type[operators.GT | operators.GE],
+            type[operators.LT | operators.LE]
         ],
         types_map: TypesMapType
     ) -> Param:
@@ -157,7 +157,7 @@ class Parser:
             left = operations[0](self._cast(_data[0], types_map[field_name]))
         if _data[1]:
             right = operations[1](self._cast(_data[1], types_map[field_name]))
-        value = codex.query.RANGE(left, right)
+        value = operators.RANGE(left, right)
 
         return Param(name=field_name, value=value)
 
@@ -168,7 +168,7 @@ class Parser:
         types_map: TypesMapType,
         inversion: bool = False,
     ):
-        field_value = codex.query.SET(
+        field_value = operators.SET(
             *(
                 self._cast(v, types_map[field_name])
                 for v in field_value.split(',')
@@ -177,7 +177,7 @@ class Parser:
         )
 
         if inversion:
-            field_value = codex.query.NOT(field_value)
+            field_value = operators.NOT(field_value)
 
         return Param(
             name=field_name,
@@ -188,14 +188,14 @@ class Parser:
         self,
         field_name: str,
         field_value: str,
-        operation: type[codex.query.FilterBit],
+        operation: type[operators.FilterBit],
         types_map: TypesMapType,
         inversion: bool = False
     ):
         field_value = operation(self._cast(field_value, types_map[field_name]))
 
         if inversion:
-            field_value = codex.query.NOT(field_value)
+            field_value = operators.NOT(field_value)
 
         return Param(
             name=field_name,
@@ -209,26 +209,26 @@ class Parser:
 
     def _pattern_handler_map(self, types_map: TypesMapType):
         return {
-            re.compile('^(null)$'): lambda x, y: Param(name=x, value=codex.query.IS(None)),
-            re.compile('^(!null)$'): lambda x, y: Param(name=x, value=codex.query.NOT(codex.query.IS(None))),
+            re.compile('^(null)$'): lambda x, y: Param(name=x, value=operators.IS(None)),
+            re.compile('^(!null)$'): lambda x, y: Param(name=x, value=operators.NOT(operators.IS(None))),
             re.compile(r'^\(([\dTZ:\-,.]+)\)$'): functools.partial(
                 self._interval,
-                operations=(codex.query.GT, codex.query.LT),
+                operations=(operators.GT, operators.LT),
                 types_map=types_map
             ),
             re.compile(r'^\[([\dTZ:\-,.]+)\)$'): functools.partial(
                 self._interval,
-                operations=(codex.query.GE, codex.query.LT),
+                operations=(operators.GE, operators.LT),
                 types_map=types_map
             ),
             re.compile(r'^\(([\dTZ:\-,.]+)]$'): functools.partial(
                 self._interval,
-                operations=(codex.query.GT, codex.query.LE),
+                operations=(operators.GT, operators.LE),
                 types_map=types_map
             ),
             re.compile(r'^\[([\dTZ:\-,.]+)]$'): functools.partial(
                 self._interval,
-                operations=(codex.query.GE, codex.query.LE),
+                operations=(operators.GE, operators.LE),
                 types_map=types_map
             ),
             re.compile(r'^!{(.*)}$'): functools.partial(
@@ -242,19 +242,19 @@ class Parser:
             ),
             re.compile(r'^~{2}(.*)$'): functools.partial(
                 self._literal,
-                operation=codex.query.LIKE,
+                operation=operators.LIKE,
                 types_map=types_map
             ),
             re.compile(r'^![~]{2}(.*)$'): functools.partial(
                 self._literal,
-                operation=codex.query.LIKE,
+                operation=operators.LIKE,
                 inversion=True,
                 types_map=types_map
             ),
             re.compile(r'^~(.*)$'): functools.partial(
                 self._literal,
                 operation=functools.partial(
-                    codex.query.LIKE,
+                    operators.LIKE,
                     case_sensitive=True
                 ),
                 types_map=types_map
@@ -262,7 +262,7 @@ class Parser:
             re.compile(r'^!~(.*)$'): functools.partial(
                 self._literal,
                 operation=functools.partial(
-                    codex.query.LIKE,
+                    operators.LIKE,
                     case_sensitive=True
                 ),
                 inversion=True,
@@ -270,13 +270,13 @@ class Parser:
             ),
             re.compile(r'^!(.*)$'): functools.partial(
                 self._literal,
-                operation=codex.query.EQ,
+                operation=operators.EQ,
                 inversion=True,
                 types_map=types_map
             ),
             re.compile(r'(.*)'): functools.partial(
                 self._literal,
-                operation=codex.query.EQ,
+                operation=operators.EQ,
                 types_map=types_map
             )
         }

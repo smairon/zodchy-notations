@@ -4,7 +4,7 @@ import uuid
 
 import pytest
 
-from zodchy import codex
+from zodchy import operators
 
 references = {
     "datetime": (
@@ -47,59 +47,59 @@ references = {
     [
         (
             f"item_id={references['uuid'][0]}",
-            codex.query.EQ(references['uuid'][1])
+            operators.EQ(references['uuid'][1])
         ),
         (
             f"amount={references['int'][0]}",
-            codex.query.EQ(references['int'][1])
+            operators.EQ(references['int'][1])
         ),
         (
             f"price={references['float'][0]}",
-            codex.query.EQ(references['float'][1])
+            operators.EQ(references['float'][1])
         ),
         (
             f"created_at={references['datetime'][0]}",
-            codex.query.EQ(references['datetime'][1])
+            operators.EQ(references['datetime'][1])
         ),
         (
             f"birthday={references['date'][0]}",
-            codex.query.EQ(references['date'][1])
+            operators.EQ(references['date'][1])
         ),
         (
             f"name={references['str'][0]}",
-            codex.query.EQ(references['str'][1])
+            operators.EQ(references['str'][1])
         ),
         (
             f"is_active={references['bool_positive'][0]}",
-            codex.query.EQ(references['bool_positive'][1])
+            operators.EQ(references['bool_positive'][1])
         ),
         (
             f"is_active={references['bool_negative'][0]}",
-            codex.query.EQ(references['bool_negative'][1])
+            operators.EQ(references['bool_negative'][1])
         ),
         (
             "item_id=null",
-            codex.query.IS(None)
+            operators.IS(None)
         ),
         (
             "created_at=!null",
-            codex.query.NOT(codex.query.IS(None))
+            operators.NOT(operators.IS(None))
         ),
         (
             f"annotation=~{references['str'][0]}",
-            codex.query.LIKE(references['str'][1], case_sensitive=True)
+            operators.LIKE(references['str'][1], case_sensitive=True)
         ),
         (
             f"annotation=!~{references['str'][0]}",
-            codex.query.NOT(codex.query.LIKE(references['str'][1], case_sensitive=True))
+            operators.NOT(operators.LIKE(references['str'][1], case_sensitive=True))
         ),
         (
             f"annotation=~~{references['str'][0]}",
-            codex.query.LIKE(references['str'][1], case_sensitive=False)
+            operators.LIKE(references['str'][1], case_sensitive=False)
         ),
         (
             f"annotation=!~~{references['str'][0]}",
-            codex.query.NOT(codex.query.LIKE(references['str'][1], case_sensitive=False))
+            operators.NOT(operators.LIKE(references['str'][1], case_sensitive=False))
         )
     ]
 )
