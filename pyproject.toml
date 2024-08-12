@@ -8,7 +8,7 @@ repository = "https://github.com/smairon/zodchy-notations"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-zodchy = "^0.3.0"
+zodchy = "^0.4.2"
 python-dateutil = "^2.9.0"
 
 [tool.poetry.group.test.dependencies]
@@ -17,3 +17,9 @@ pytest = "^8.1.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dev-dependencies]
+mypy= "^1.11.1"
+
+[tool.mypy]
+disable_error_code = "import-untyped"

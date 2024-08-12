@@ -10,10 +10,10 @@ import functools
 
 from zodchy import codex, operators
 
-FieldName = str
-FieldType = type
-TypesMapType = codex.query.NotationTypesMap
-QueryType = codex.query.NotationQuery
+FieldName: typing.TypeAlias = str
+FieldType: typing.TypeAlias = type
+TypesMapType: typing.TypeAlias = codex.query.NotationTypesMap
+QueryType: typing.TypeAlias = codex.query.NotationQuery
 
 
 @dataclasses.dataclass
@@ -253,7 +253,7 @@ class Parser:
             ),
             re.compile(r'^~(.*)$'): functools.partial(
                 self._literal,
-                operation=functools.partial(
+                operation=functools.partial(  # type: ignore[arg-type]
                     operators.LIKE,
                     case_sensitive=True
                 ),
@@ -261,7 +261,7 @@ class Parser:
             ),
             re.compile(r'^!~(.*)$'): functools.partial(
                 self._literal,
-                operation=functools.partial(
+                operation=functools.partial(  # type: ignore[arg-type]
                     operators.LIKE,
                     case_sensitive=True
                 ),
